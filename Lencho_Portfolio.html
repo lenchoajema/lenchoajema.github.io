@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lencho Ajema Negese — Computer Vision & ML Research</title>
+<meta name="description" content="Computer vision and machine learning researcher from Bishoftu, Ethiopia — optical flow, sensor fusion, and applied AI for the physical world.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #10141a;
+    --bg-alt: #161c24;
+    --bg-card: #141a21;
+    --ink: #ece7dd;
+    --ink-dim: #98a2ad;
+    --ink-faint: #5c6672;
+    --line: #262e38;
+    --amber: #dd9a4d;
+    --amber-dim: #8a6a41;
+    --teal: #5aa79d;
+    --violet: #8d81c9;
+    --max: 920px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{ background:var(--amber); color:#10141a; }
+
+  a{ color:inherit; }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:3px; border-radius:2px; }
+
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 28px; }
+
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
+
+  /* ───────── NAV ───────── */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(16,20,26,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:var(--max); margin:0 auto; padding:16px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .nav-mark{ font-family:'Fraunces', serif; font-weight:600; font-size:17px; letter-spacing:-0.01em; }
+  .nav-mark span{ color:var(--amber); }
+  .nav-links{ display:flex; gap:26px; list-style:none; }
+  .nav-links a{
+    text-decoration:none; font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--ink-dim); font-family:'IBM Plex Mono', monospace;
+    transition:color .15s;
+  }
+  .nav-links a:hover{ color:var(--amber); }
+  @media (max-width:640px){ .nav-links{ gap:14px; } .nav-links a{ font-size:10.5px; } }
+
+  /* ───────── HERO ───────── */
+  .hero{
+    position:relative; overflow:hidden;
+    min-height:86vh; display:flex; align-items:flex-end;
+    border-bottom:1px solid var(--line);
+  }
+  #flowfield{ position:absolute; inset:0; width:100%; height:100%; opacity:0.55; }
+  .hero-scrim{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(16,20,26,0.15) 0%, rgba(16,20,26,0.55) 60%, rgba(16,20,26,0.92) 100%);
+    pointer-events:none;
+  }
+  .hero-inner{ position:relative; z-index:2; padding:120px 28px 64px; max-width:var(--max); margin:0 auto; width:100%; }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--amber); margin-bottom:18px; display:block;
+  }
+  .hero h1{
+    font-size:clamp(38px, 6vw, 62px); line-height:1.04; color:var(--ink); max-width:11ch;
+  }
+  .hero-sub{
+    margin-top:22px; font-size:18px; line-height:1.6; color:var(--ink-dim); max-width:56ch;
+  }
+  .hero-links{ display:flex; flex-wrap:wrap; gap:10px; margin-top:34px; }
+  .pill{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; letter-spacing:0.02em;
+    padding:9px 15px; border:1px solid var(--line); border-radius:99px;
+    text-decoration:none; color:var(--ink-dim); transition:all .18s; display:inline-flex; align-items:center; gap:6px;
+  }
+  .pill:hover{ border-color:var(--amber); color:var(--amber); }
+
+  /* ───────── SECTION SHELL ───────── */
+  section{ padding:86px 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+  .sec-head{ margin-bottom:44px; }
+  .sec-eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--teal); display:block; margin-bottom:10px;
+  }
+  .sec-head h2{ font-size:clamp(26px,3.4vw,34px); color:var(--ink); }
+
+  /* ───────── ABOUT ───────── */
+  .about-lead{ font-size:19px; line-height:1.75; color:var(--ink); max-width:66ch; }
+  .about-lead strong{ color:var(--amber); font-weight:500; }
+  .facts{ display:flex; flex-wrap:wrap; gap:10px; margin-top:32px; }
+  .fact{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--ink-dim);
+    border:1px solid var(--line); padding:8px 14px; border-radius:6px; background:var(--bg-alt);
+  }
+  .fact::before{ content:"› "; color:var(--teal); }
+
+  /* ───────── RESEARCH FOCUS GRID ───────── */
+  .focus-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+  .focus-card{ background:var(--bg); padding:26px 24px; }
+  .focus-card .fn{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--amber-dim); margin-bottom:12px; }
+  .focus-card h3{ font-size:17px; font-weight:600; margin-bottom:9px; color:var(--ink); }
+  .focus-card p{ font-size:14px; color:var(--ink-dim); line-height:1.6; }
+  @media (max-width:800px){ .focus-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:560px){ .focus-grid{ grid-template-columns:1fr; } }
+
+  /* ───────── TIMELINE ───────── */
+  .timeline{ position:relative; padding-left:110px; }
+  .timeline::before{
+    content:""; position:absolute; left:78px; top:6px; bottom:6px; width:1px; background:var(--line);
+  }
+  .t-item{ position:relative; padding-bottom:38px; }
+  .t-item:last-child{ padding-bottom:0; }
+  .t-year{
+    position:absolute; left:-110px; top:1px; width:70px; text-align:right;
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--teal);
+  }
+  .t-dot{
+    position:absolute; left:-37px; top:5px; width:9px; height:9px; border-radius:50%;
+    background:var(--bg); border:2px solid var(--amber);
+  }
+  .t-item h3{ font-size:16.5px; color:var(--ink); font-weight:600; margin-bottom:4px; }
+  .t-item .t-org{ font-size:13.5px; color:var(--ink-dim); margin-bottom:8px; font-style:italic; }
+  .t-item p{ font-size:14px; color:var(--ink-dim); line-height:1.65; max-width:60ch; }
+  @media (max-width:600px){
+    .timeline{ padding-left:20px; }
+    .timeline::before{ left:0; }
+    .t-dot{ left:-24px; }
+    .t-year{ position:static; display:block; margin-bottom:4px; text-align:left; width:auto; }
+  }
+
+  /* ───────── PROJECTS ───────── */
+  .proj-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:700px){ .proj-grid{ grid-template-columns:1fr; } }
+  .proj-card{
+    background:var(--bg-card); border:1px solid var(--line); border-radius:10px; padding:22px 24px;
+    display:flex; flex-direction:column; gap:10px; transition:border-color .2s;
+  }
+  .proj-card:hover{ border-color:var(--ink-faint); }
+  .proj-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .proj-card h3{ font-size:16.5px; color:var(--ink); font-weight:600; }
+  .status{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; padding:3px 9px; border-radius:99px;
+    white-space:nowrap; letter-spacing:0.02em;
+  }
+  .status.own{ background:rgba(90,167,157,0.14); color:var(--teal); }
+  .status.studied{ background:rgba(140,120,60,0.18); color:var(--amber); }
+  .status.prod{ background:rgba(141,129,201,0.16); color:var(--violet); }
+  .proj-card p{ font-size:13.5px; color:var(--ink-dim); line-height:1.6; }
+  .tag-row{ display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .tag{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-faint); border:1px solid var(--line); padding:3px 8px; border-radius:5px; }
+  .proj-link{ margin-top:auto; font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-dim); text-decoration:none; padding-top:6px; }
+  .proj-link:hover{ color:var(--amber); }
+
+  /* ───────── CERTIFICATIONS ───────── */
+  .cert-list{ display:flex; flex-direction:column; }
+  .cert-row{
+    display:flex; justify-content:space-between; align-items:baseline; gap:16px;
+    padding:16px 0; border-top:1px solid var(--line);
+  }
+  .cert-row:last-child{ border-bottom:1px solid var(--line); }
+  .cert-name{ font-size:15px; color:var(--ink); }
+  .cert-meta{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-faint); white-space:nowrap; text-align:right; }
+  @media (max-width:560px){ .cert-row{ flex-direction:column; gap:4px; } .cert-meta{ text-align:left; } }
+
+  /* ───────── DOCTORAL ───────── */
+  .doc-box{
+    background:var(--bg-alt); border:1px solid var(--line); border-radius:12px; padding:36px 34px;
+  }
+  .doc-box p{ font-size:15.5px; color:var(--ink-dim); line-height:1.75; max-width:64ch; margin-bottom:22px; }
+  .doc-box p:last-of-type{ margin-bottom:0; }
+  .inst-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+  .inst{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--ink); background:var(--bg);
+    border:1px solid var(--amber-dim); padding:7px 14px; border-radius:6px;
+  }
+
+  /* ───────── FOOTER ───────── */
+  footer{ padding:64px 0 48px; }
+  .foot-top{ display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px; margin-bottom:36px; }
+  .foot-title{ font-family:'Fraunces', serif; font-size:26px; color:var(--ink); max-width:14ch; }
+  .foot-links{ display:flex; flex-wrap:wrap; gap:10px; }
+  .foot-bottom{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--ink-faint);
+    padding-top:24px; border-top:1px solid var(--line);
+  }
+
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){ .reveal{ opacity:1; transform:none; transition:none; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-mark">Lencho<span>.</span>Ajema</div>
+    <ul class="nav-links">
+      <li><a href="#about">Profile</a></li>
+      <li><a href="#focus">Research</a></li>
+      <li><a href="#timeline">Timeline</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#doctoral">Doctoral</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas id="flowfield"></canvas>
+  <div class="hero-scrim"></div>
+  <div class="hero-inner">
+    <span class="eyebrow">Computer Vision · Bishoftu, Ethiopia</span>
+    <h1>Lencho Ajema Negese</h1>
+    <p class="hero-sub">I study how machines recover motion, structure, and risk from raw sensor data — video frames, aerial imagery, LiDAR point clouds — and I'm currently applying to doctoral programs to take that work further.</p>
+    <div class="hero-links">
+      <a class="pill" href="mailto:lenchoajema@gmail.com">✉ Email</a>
+      <a class="pill" href="https://github.com/Ajema-len" target="_blank" rel="noopener">GitHub — Ajema-len</a>
+      <a class="pill" href="https://orcid.org/0009-0004-6093-8890" target="_blank" rel="noopener">ORCID</a>
+      <a class="pill" href="#contact">More links ↓</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">Profile</span>
+        <h2>Reading the physical world through sensors</h2>
+      </div>
+      <p class="about-lead reveal">
+        I build systems that turn raw sensor streams into measurements of the world — where something moved, how fast, and what that means. My MSc thesis used deep learning to <strong>detect and classify events in UAV aerial footage</strong>; my current work extends that toward debris-flow monitoring, road-safety sensing, and network security research at the doctoral level. Before all of this, I spent seven years as a computer engineer in a defence environment and three years teaching AI and computer vision at university — both of which shape how I think about building systems that have to work outside the lab.
+      </p>
+      <div class="facts reveal">
+        <span class="fact">Bishoftu, Ethiopia</span>
+        <span class="fact">MSc Computer Science & Engineering — ASTU (3.63 / 4.0)</span>
+        <span class="fact">7 yrs computer engineering</span>
+        <span class="fact">3 yrs university instructor — AI & Computer Vision</span>
+        <span class="fact">Applying to doctoral programs, 2026</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="focus">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">Research focus</span>
+        <h2>Six problems I keep returning to</h2>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="focus-grid reveal">
+        <div class="focus-card">
+          <div class="fn">01</div>
+          <h3>Optical flow &amp; motion estimation</h3>
+          <p>Recovering dense motion fields between frames — the same underlying math whether the frames come from a phone camera or a mountainside LiDAR scanner.</p>
+        </div>
+        <div class="focus-card">
+          <div class="fn">02</div>
+          <h3>Object detection &amp; tracking</h3>
+          <p>Finding and following the things that matter in a scene, under real-world conditions: occlusion, poor light, and motion blur.</p>
+        </div>
+        <div class="focus-card">
+          <div class="fn">03</div>
+          <h3>Remote sensing</h3>
+          <p>Reading terrain and change from satellite and aerial sensors — multispectral imagery, SAR, and point cloud data.</p>
+        </div>
+        <div class="focus-card">
+          <div class="fn">04</div>
+          <h3>Sensor fusion</h3>
+          <p>Combining camera, LiDAR, and radar data so that each sensor's strengths cover for the others' blind spots.</p>
+        </div>
+        <div class="focus-card">
+          <div class="fn">05</div>
+          <h3>Explainable AI</h3>
+          <p>Model decisions that a geologist, safety engineer, or auditor can actually inspect, trust, and question.</p>
+        </div>
+        <div class="focus-card">
+          <div class="fn">06</div>
+          <h3>ML for network security</h3>
+          <p>Applying sequence models and anomaly detection to traffic and log data — deep learning meeting years of systems engineering.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="timeline">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">Background</span>
+        <h2>Education &amp; experience</h2>
+      </div>
+      <div class="timeline reveal">
+
+        <div class="t-item">
+          <div class="t-year">2013–18</div>
+          <div class="t-dot"></div>
+          <h3>BSc, Computer &amp; Information Technology</h3>
+          <div class="t-org">Defence University College of Engineering · specialisation in Computer Engineering</div>
+          <p>Major GPA 3.56 / 4.0. Coursework spanning cryptography &amp; network security, real-time embedded systems, digital signal processing, and artificial intelligence.</p>
+        </div>
+
+        <div class="t-item">
+          <div class="t-year">2018–</div>
+          <div class="t-dot"></div>
+          <h3>Computer Engineer</h3>
+          <div class="t-org">Defence, Ethiopia</div>
+          <p>Seven years of applied computer engineering — embedded systems, hardware-software integration, and network infrastructure in a high-assurance operational environment.</p>
+        </div>
+
+        <div class="t-item">
+          <div class="t-year">2019–22</div>
+          <div class="t-dot"></div>
+          <h3>MSc, Computer Science &amp; Engineering</h3>
+          <div class="t-org">Adama Science and Technology University</div>
+          <p>GPA 3.63 / 4.0. Thesis: <em>Target Identification and Event Analysis of UAV-Based Images Using Deep Learning</em> — a CNN pipeline for detecting and classifying events across aerial image sequences. Result: Good.</p>
+        </div>
+
+        <div class="t-item">
+          <div class="t-year">2021–24</div>
+          <div class="t-dot"></div>
+          <h3>Course Instructor</h3>
+          <div class="t-org">Rift Valley University, Bishoftu</div>
+          <p>Taught Artificial Intelligence, Computer Vision &amp; Image Processing, and Network &amp; System Administration at undergraduate level.</p>
+        </div>
+
+        <div class="t-item">
+          <div class="t-year">2023–</div>
+          <div class="t-dot"></div>
+          <h3>Full-Stack ML Engineer</h3>
+          <div class="t-org">OmniFood / OmniOrder (lencenter.com), Addis Ababa</div>
+          <p>Architecting an AI-augmented delivery platform serving 50+ vendor types, with real-time order tracking and production-grade access control.</p>
+        </div>
+
+        <div class="t-item">
+          <div class="t-year">2025</div>
+          <div class="t-dot"></div>
+          <h3>ALX Software Engineering Programme</h3>
+          <div class="t-org">ALX Africa — Back-end Specialisation</div>
+          <p>Twelve-month intensive programme covering back-end engineering fundamentals and applied software practice.</p>
+        </div>
+
+        <div class="t-item">
+          <div class="t-year">2026</div>
+          <div class="t-dot"></div>
+          <h3>Doctoral applications</h3>
+          <div class="t-org">Computer vision &amp; applied AI</div>
+          <p>Currently applying to research groups in Europe, the UAE, and beyond — see <a href="#doctoral" style="color:var(--amber); text-decoration:none;">Doctoral research</a> below.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">Projects</span>
+        <h2>What I've built, and what I've studied</h2>
+      </div>
+      <div class="proj-grid reveal">
+
+        <div class="proj-card">
+          <div class="proj-top">
+            <h3>RAFT optical flow study</h3>
+            <span class="status own">Own work</span>
+          </div>
+          <p>Ran the official RAFT (Teed &amp; Deng, ECCV 2020) pretrained model on custom frame pairs and produced dense motion-field visualisations end to end, on Google Colab.</p>
+          <div class="tag-row"><span class="tag">PyTorch</span><span class="tag">torchvision</span><span class="tag">Colab</span></div>
+          <a class="proj-link" href="https://github.com/Ajema-len" target="_blank" rel="noopener">github.com/Ajema-len ↗</a>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-top">
+            <h3>VGGNet architecture study</h3>
+            <span class="status studied">Studied fork</span>
+          </div>
+          <p>Forked and studied a VGG-19 (Simonyan &amp; Zisserman, 2015) implementation to understand large-scale CNN architecture and ImageNet-scale training pipelines. Not an original training run.</p>
+          <div class="tag-row"><span class="tag">TensorFlow</span><span class="tag">ImageNet</span><span class="tag">Architecture study</span></div>
+          <a class="proj-link" href="https://github.com/lenchoajema/VGG" target="_blank" rel="noopener">github.com/lenchoajema/VGG ↗</a>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-top">
+            <h3>OmniFood / OmniOrder</h3>
+            <span class="status prod">Production</span>
+          </div>
+          <p>AI-augmented multi-vendor delivery marketplace for Addis Ababa serving 50+ vendor types, with real-time order tracking and role-based access control.</p>
+          <div class="tag-row"><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">PostgreSQL</span><span class="tag">SSE</span></div>
+          <a class="proj-link" href="https://lencenter.com" target="_blank" rel="noopener">lencenter.com ↗</a>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-top">
+            <h3>IdeaOS</h3>
+            <span class="status own">Own work</span>
+          </div>
+          <p>AI-powered idea-tracking app with a three-tier model router (Haiku / Sonnet / Opus) and semantic vector search over saved ideas.</p>
+          <div class="tag-row"><span class="tag">Anthropic SDK</span><span class="tag">pgvector</span><span class="tag">Supabase</span><span class="tag">Redis</span></div>
+          <a class="proj-link" href="https://github.com/Ajema-len/IdeaOS" target="_blank" rel="noopener">github.com/Ajema-len/IdeaOS ↗</a>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-top">
+            <h3>AutoShine Personal Butler</h3>
+            <span class="status own">Own work</span>
+          </div>
+          <p>An 11-state finite-state machine controlling stepper, DC, and servo motors — a fully automatic shoe-shine machine with current-sensor-based touch detection.</p>
+          <div class="tag-row"><span class="tag">Arduino Mega 2560</span><span class="tag">C++</span><span class="tag">Embedded systems</span></div>
+          <a class="proj-link" href="https://github.com/Ajema-len" target="_blank" rel="noopener">github.com/Ajema-len ↗</a>
+        </div>
+
+        <div class="proj-card">
+          <div class="proj-top">
+            <h3>OvaSync</h3>
+            <span class="status own">Own work</span>
+          </div>
+          <p>Privacy-first menstrual-cycle tracker built with zero network calls — everything stored locally, on-device.</p>
+          <div class="tag-row"><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">SQLite</span></div>
+          <a class="proj-link" href="https://github.com/Ajema-len" target="_blank" rel="noopener">github.com/Ajema-len ↗</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="certifications">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">Certifications</span>
+        <h2>Continued study</h2>
+      </div>
+      <div class="cert-list reveal">
+        <div class="cert-row">
+          <div class="cert-name">Software Engineering — Back-end Specialisation</div>
+          <div class="cert-meta">ALX Africa · Feb 2025</div>
+        </div>
+        <div class="cert-row">
+          <div class="cert-name">System Administration and IT Infrastructure Services</div>
+          <div class="cert-meta">Google · Coursera · Nov 2022</div>
+        </div>
+        <div class="cert-row">
+          <div class="cert-name">Researcher Management and Leadership Training</div>
+          <div class="cert-meta">University of Colorado · Coursera · Nov 2020</div>
+        </div>
+        <div class="cert-row">
+          <div class="cert-name">Understanding Research Methods</div>
+          <div class="cert-meta">University of London &amp; SOAS · Coursera · Oct 2020</div>
+        </div>
+        <div class="cert-row">
+          <div class="cert-name">Foundations of Teaching for Learning: Being a Teacher</div>
+          <div class="cert-meta">Commonwealth Education Trust / Cambridge · Coursera · Apr 2021</div>
+        </div>
+        <div class="cert-row">
+          <div class="cert-name">Build a Full Website Using WordPress</div>
+          <div class="cert-meta">Coursera Project · Oct 2020</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="doctoral">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">Current focus</span>
+        <h2>Doctoral research</h2>
+      </div>
+      <div class="doc-box reveal">
+        <p>I'm currently applying to doctoral programmes in computer vision and applied AI, with research interests spanning natural-hazard monitoring, transport-infrastructure resilience, and network security. This year has been about aligning my systems-engineering and teaching background with rigorous CV research — reading primary literature closely, building independent implementations rather than relying on secondhand summaries, and reaching out directly to research groups whose work I respect.</p>
+        <p>If you're working in any of these areas and want to compare notes, I'd welcome the conversation.</p>
+        <div class="inst-row">
+          <span class="inst">ETH Zürich</span>
+          <span class="inst">UAEU</span>
+          <span class="inst">MBZUAI</span>
+          <span class="inst">+ other CV/AI research groups</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-title">Let's talk about vision, motion, and risk.</div>
+      <div class="foot-links">
+        <a class="pill" href="mailto:lenchoajema@gmail.com">✉ lenchoajema@gmail.com</a>
+      </div>
+    </div>
+    <div class="foot-links">
+      <a class="pill" href="https://github.com/Ajema-len" target="_blank" rel="noopener">GitHub — Ajema-len</a>
+      <a class="pill" href="https://github.com/lenchoajema" target="_blank" rel="noopener">GitHub — lenchoajema</a>
+      <a class="pill" href="https://orcid.org/0009-0004-6093-8890" target="_blank" rel="noopener">ORCID</a>
+      <a class="pill" href="https://scholar.google.com" target="_blank" rel="noopener">Google Scholar</a>
+      <a class="pill" href="https://www.linkedin.com/in/lenchoajema" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="pill" href="https://lencenter.com" target="_blank" rel="noopener">lencenter.com</a>
+    </div>
+    <div class="foot-bottom">
+      <span>Lencho Ajema Negese · Bishoftu, Ethiopia</span>
+      <span>Last updated June 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Ambient optical-flow field (hero signature element) ──────────────────
+(function(){
+  const canvas = document.getElementById('flowfield');
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w, h, particles = [];
+  const COUNT = 140;
+
+  function resize(){
+    w = canvas.width = canvas.offsetWidth * devicePixelRatio;
+    h = canvas.height = canvas.offsetHeight * devicePixelRatio;
+  }
+
+  function fieldAngle(x, y, t){
+    // smooth pseudo-flow field via layered sine waves (evokes a real motion/vector field)
+    const s = 0.0028;
+    return Math.sin(x*s + t*0.06) * 1.3
+         + Math.cos(y*s*1.4 - t*0.045) * 1.1
+         + Math.sin((x+y)*s*0.6 + t*0.03);
+  }
+
+  function initParticles(){
+    particles = [];
+    for(let i=0;i<COUNT;i++){
+      particles.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        life: Math.random()*200
+      });
+    }
+  }
+
+  function step(t){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p=>{
+      const angle = fieldAngle(p.x, p.y, t*0.001);
+      const speed = 0.9 * devicePixelRatio;
+      const nx = p.x + Math.cos(angle)*speed*4;
+      const ny = p.y + Math.sin(angle)*speed*4;
+
+      // colour follows flow-field convention: hue = direction, alpha = subtle
+      const hue = ((angle+Math.PI)/(2*Math.PI))*300 + 20;
+      ctx.strokeStyle = `hsla(${hue}, 55%, 62%, 0.28)`;
+      ctx.lineWidth = 1.1 * devicePixelRatio;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(nx, ny);
+      ctx.stroke();
+
+      p.x = nx; p.y = ny; p.life--;
+      if(p.life<=0 || p.x<0||p.x>w||p.y<0||p.y>h){
+        p.x = Math.random()*w; p.y = Math.random()*h; p.life = 80+Math.random()*160;
+      }
+    });
+  }
+
+  function loop(t){
+    step(t);
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', ()=>{ resize(); initParticles(); });
+  resize(); initParticles();
+
+  if(reduceMotion){
+    step(0); // draw a single static frame
+  } else {
+    requestAnimationFrame(loop);
+  }
+})();
+
+// ── Scroll reveal ──────────────────────────────────────────────────────
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){ els.forEach(e=>e.classList.add('in')); return; }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  els.forEach(e=>io.observe(e));
+})();
+</script>
+</body>
+</html>
